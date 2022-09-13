@@ -13,7 +13,8 @@ if __name__ == '__main__':
         else:
             start = int(vfile.start_at)
             end = int(vfile.end_at)
-            streams.append(video.cut_video(vfile.fpath, start, end))
+            duration = end - start
+            streams.append(video.cut_video(vfile.fpath, start, duration))
     merged_video, merged_audio = video.concat_video_streams(streams)
     output = video.generate_output_stream(merged_video, merged_audio, output)
     video.run(output)

@@ -1,7 +1,9 @@
 from typing import List, Optional, Union
+
 import yaml
 from pydantic import BaseModel
 from yaml.loader import SafeLoader
+
 
 class SingleVideoConfig(BaseModel):
     fpath: str
@@ -10,9 +12,11 @@ class SingleVideoConfig(BaseModel):
     end_at: Optional[Union[str, int]]
     volume: int
 
+
 class ConfigModel(BaseModel):
     output_name: str
     files: List[SingleVideoConfig]
+
 
 def check_video(video: dict) -> None:
     '''
@@ -26,6 +30,7 @@ def check_video(video: dict) -> None:
         if 'end_at' not in video:
             raise 'Missing end_at'
 
+
 def parse_configs(config_dict: dict) -> ConfigModel:
     output_name = config_dict['output_name']
     videos = config_dict['inputs']
@@ -33,25 +38,18 @@ def parse_configs(config_dict: dict) -> ConfigModel:
     for video in videos:
         check_video(video['input'])
         if video['input']['complete']:
-            model = SingleVideoConfig(
-                fpath=video['input']['file'],
-                complete=True,
-                volume=video['input']['volume']
-            )
+            model = SingleVideoConfig(fpath=video['input']['file'],
+                                      complete=True,
+                                      volume=video['input']['volume'])
         else:
-            model = SingleVideoConfig(
-                fpath=video['input']['file'],
-                complete=True,
-                volume=video['input']['volume'],
-                start_at=video['input']['start_at'],
-                end_at=video['input']['end_at']
-            )
+            model = SingleVideoConfig(fpath=video['input']['file'],
+                                      complete=False,
+                                      volume=video['input']['volume'],
+                                      start_at=video['input']['start_at'],
+                                      end_at=video['input']['end_at'])
 
         videos_list.append(model)
-    return ConfigModel(
-        output_name=output_name,
-        files=videos_list
-    )
+    return ConfigModel(output_name=output_name, files=videos_list)
 
 
 def load_configs(config_path: str) -> ConfigModel:
@@ -65,4 +63,3 @@ def load_configs(config_path: str) -> ConfigModel:
 
 if __name__ == '__main__':
     print(load_configs('video_config.yaml'))
-
