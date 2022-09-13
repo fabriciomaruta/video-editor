@@ -1,9 +1,19 @@
+import config_loader
 import video
 
 if __name__ == '__main__':
-    video1 = video.cut_video('videos/GOPR6128.MP4', 610, 720)
-    video2 = video.load_complete_media('videos/GP016128.MP4')
-    video3 = video.cut_video('videos/GP026128.MP4', 0, 51)
-    merged_video, merged_audio = video.concat_video_streams([video1, video2, video3])
-    output = video.generate_output_stream(merged_video, merged_audio, 'jogo_wander.mp4')
+    configs = config_loader.load_configs('video_config.yaml')
+    output = configs.output_name
+    print(output)
+    streams = []
+    for vfile in configs.files:
+        print(vfile)
+        if vfile.complete:
+            streams.append(video.load_complete_media(vfile.fpath))
+        else:
+            start = int(vfile.start_at)
+            end = int(vfile.end_at)
+            streams.append(video.cut_video(vfile.fpath, start, end))
+    merged_video, merged_audio = video.concat_video_streams(streams)
+    output = video.generate_output_stream(merged_video, merged_audio, output)
     video.run(output)
