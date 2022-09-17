@@ -1,20 +1,18 @@
 # Configs
 ---
-output_name: video_output.mp4
+output_name: drive_explicacao.mp4
 inputs:
   - input:
-      file: video_input.mp4
-      complete: False
-      start_at: 0
-      end_at: 120
+      file: drives.mp4
+      complete: True
       volume : 1
   - input:
-      file: video_input2.mp4
+      file: explicacaomarcelo.mp4
       complete: True
-      volume: 1
+      volume : 1
   - input:
-      file: video_input3.mp4
-      complete: False
-      start_at: 300
-      end_at: 450
-      volume: 1
+      file: drive_forte.mp4
+      complete: True
+      volume : 1
+
+

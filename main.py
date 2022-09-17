@@ -1,6 +1,14 @@
 import config_loader
 import video
 
+'''
+Fast-forwad/slow mo with audio
+fmpeg -i output.mp4 -filter_complex "[0:v]setpts=0.25*PTS[v];[0:a]atempo=4[a]" -map "[v]" -map "[a]" ffwithaudio.mp4
+
+Without audio
+ffmpeg -i output.mp4 -filter:v "setpts=0.25*PTS" -an ffteste.mp4
+
+'''
 if __name__ == '__main__':
     configs = config_loader.load_configs('video_config.yaml')
     output = configs.output_name
