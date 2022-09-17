@@ -25,6 +25,7 @@ def load_complete_media(filepath: str) -> Any:
     '''
     return ffmpeg.input(filepath)
 
+
 def cut_video(filepath: str, start: int, duration: int) -> Any:
     '''
     Receives the file path and cut video, returning a stream
@@ -48,14 +49,17 @@ def concat_video_streams(streams: list) -> Any:
             if resulting_stream is None:
                 resulting_stream = ffmpeg.concat(stream['v'],
                                                  stream['a'],
-                                                 v=1, a=1, unsafe=True).node
+                                                 v=1,
+                                                 a=1,
+                                                 unsafe=True).node
             else:
-                resulting_stream = ffmpeg.concat(
-                    resulting_stream[0],
-                    resulting_stream[1],
-                    stream['v'],
-                    stream['a'],
-                    v=1, a=1, unsafe=True).node
+                resulting_stream = ffmpeg.concat(resulting_stream[0],
+                                                 resulting_stream[1],
+                                                 stream['v'],
+                                                 stream['a'],
+                                                 v=1,
+                                                 a=1,
+                                                 unsafe=True).node
     except Exception as e:
         raise e
     if resulting_stream is not None:
@@ -83,24 +87,31 @@ def mix_audio_video(video_track: Any, audio_track: Any) -> Any:
         raise e
 
 
-def normalize_audio(audio_track: Any, volume: float)->Any:
+def normalize_audio(audio_track: Any, volume: float) -> Any:
     '''
     Receives an audio track and normalize audio, 0 is muted 1 is the
     current level
     '''
     try:
-        normalized = ffmpeg.filter(audio_track,
-                                   'volume', volume=str(volume))
+        normalized = ffmpeg.filter(audio_track, 'volume', volume=str(volume))
         return normalized
     except Exception as e:
         raise e
 
 
-def generate_output_stream(v_stream: Any, a_stream:Any, output_name: str) -> Any:
+def fast_forward(video_track: Any, audio_track: Any, rate: float) -> Any:
+    result = ffmpeg.filter(video_track, 'setpts', '0.25*PTS')
+    audio = ffmpeg.filter(audio_track, 'atempo', '4')
+    return result.split(), audio
+
+
+def generate_output_stream(v_stream: Any, a_stream: Any,
+                           output_name: str) -> Any:
     '''
     Receive a stream and generate the output stream
     '''
     return ffmpeg.output(v_stream, a_stream, output_name)
+
 
 def run(stream: Any) -> Any:
     ffmpeg.run(stream)
